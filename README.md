@@ -1,1 +1,1 @@
-# Lisegang.jl
+# Liesegang.jl
