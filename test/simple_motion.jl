@@ -15,7 +15,7 @@ N  = 50 # number of particles
 L  = sqrt(N / ρ) # size of box
 dt = 1.0 # integration step
 v0 = 1.0 # particle's speed
-T  = 10 # integration time steps
+T  = 100 # integration time steps
 
 ### =============== ### =============== ### =============== ###
 ### INITIALIZATION OF PARTICLES INITIAL POSITIONS AND VELOCIDITES
@@ -40,10 +40,10 @@ for i in 1:T
     pts = vec(P2[(x[i],y[i]) for i=1:length(x)])
 
     # overlapping graphs
-    quiver!(pts, quiver = ([vel[i] for i in 1:2:N], [vel[i+1] for i in 1:2:N]))
+    #quiver!(pts, quiver = ([vel[i] for i in 1:2:N], [vel[i+1] for i in 1:2:N]))
 
     # overwriting graphs
-    # quiver(pts, quiver = ([vel[i] for i in 1:2:N], [vel[i+1] for i in 1:2:N]))
+     quiver(pts, quiver = ([vel[i] for i in 1:2:N], [vel[i+1] for i in 1:2:N]))
 
     frame(anim)
 
