@@ -1,1 +1,3 @@
 this is a test
+now 
+I'm adding new lines
