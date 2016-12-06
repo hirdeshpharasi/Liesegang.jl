@@ -54,6 +54,14 @@ function norm_momentum!(parts::Array{particle,1})
         p.vel = p.vel - vt
     end
 end
-function norm_temperature!(parts::Array{particle,1})
-
+################################################################################
+#now the normalization of temperature
+function norm_temperature!(parts::Array{particle,1}, Tr::Float64)
+    T = 0 #temperature
+    for p in parts #this is the calculation of the Temperature
+        T += p.mass * norm(p.vel)^2 / (2 * length(parts))
+    end
+    for p in parts
+        p.vel = p.vel * sqrt(Tr / T) #multiplying each velocity for the factor of sqrt(Ttarget/Tactual)
+    end
 end
