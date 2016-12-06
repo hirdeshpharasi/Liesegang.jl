@@ -8,6 +8,6 @@ end
 #definition of a box
 type box
     pos::Array{Float64,1}
-    vel::Array{Float64,1}
+    vel::Array{Float64,1} # the velocity of the box.
     #npart::Int64  not really sure if is neccesary to have the number of particles of each box.
 end
