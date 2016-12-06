@@ -13,14 +13,17 @@ function rotate_vec(v::Array{Float64,1}, α::Float64)
 end
 ################################################################################
 #computing the momentum of the boxes
-function box_vel(parts::Array{particle,1},boxes::Array{box,1}, Ly::Int64)
+function box_vel(parts::Array{particle,1},boxes::Array{box,1})
     for (i, box) in enumerate(boxes) #this is for enumerating the boxes
         tmass = 0 #initializating the total mass of the box
         for p in filter(x-> x.indbox == i, parts) #the loop is made in the particles inside the box i
+            #println("inside the filter ", i)
             box.vel += p.mass * p.vel #sums the momentums of all particles
             tmass += p.mass #sums the mass
         end
-        box.vel /= tmass #normalize the momentum of the box with the mass of the particles.
+        if tmass != 0
+            box.vel /= tmass #normalize the momentum of the box with the mass of the particles.
+        end
     end
 end
 ################################################################################
