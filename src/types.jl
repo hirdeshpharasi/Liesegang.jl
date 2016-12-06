@@ -4,6 +4,13 @@ type particle
     vel::Array{Float64,1} #velocities
     m::Int64 #mass
     indbox::Int64 #the box where the particle is
+    function particle(dim::Array{Int64,1}, m::Float64)
+        this = new()
+        this.pos = rand(2) .* dim
+        this.vel = rand(2)
+        this.m = m
+        this.indbox = ceil(this.pos[1]) + dim[1] * (ceil(this.pos[2])-1)
+    end
 end
 #definition of a box
 type box

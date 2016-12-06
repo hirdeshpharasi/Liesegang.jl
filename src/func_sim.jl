@@ -33,10 +33,27 @@ function parts_vels!(parts::Array{particle,1}, boxes::Array{box,1}, α::Float64)
     end
 end
 ################################################################################
-#getting new positions of the particles.
-function getpos_parts!(parts::Array{particle,1}, τ::Float64, Dim::Array{Int64,1})
+#getting new positions of the particles with periodic boundary conditions (pbc)
+function getpos_pbc!(parts::Array{particle,1}, τ::Float64, dim::Array{Int64,1})
     for p in parts
-        p.pos[1] += mod(p.vel[1] * τ, Dim[1]) #to get the periodic boundary conditions.
-        p.pos[2] += mod(p.vel[2] * τ, Dim[2])
+        p.pos[1] = mod(p.pos[1] + p.vel[1] * τ , dim[1]) #to get the periodic boundary conditions.
+        p.pos[2] = mod(p.pos[2] + p.vel[2] * τ , dim[2])
     end
+end
+################################################################################
+#this is the ininitialization part, first the normalization of the total momentum.
+function norm_momentum!(parts::Array{particle,1})
+    vt = zeros(2) #sum of velocities
+    mt = 0 #total mass
+    for p in parts #summing all velocities and masses
+        vt += p.vel
+        mt += p.mass
+    end
+    vt /= mt #normalizing the sum
+    for p in parts #applying the normalization of momentum
+        p.vel = p.vel - vt
+    end
+end
+function norm_temperature!(parts::Array{particle,1})
+
 end
