@@ -30,7 +30,7 @@ boxes = [box() for _ in 1:(Lx * Ly)]
 anim = @animate for _ in 1:tmax
     box_vel(parts,boxes)
     #moving the particles
-    α = 130.0 #fixing the angle just for the test
+    α = rand(0.0:180.0)*rand([-1,1]) #random angle
     #rotating...
     parts_vels!(parts, boxes, α)
     #now getting the new positions of the particles
