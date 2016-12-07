@@ -9,7 +9,7 @@ using Plots #plotting package
 Lx = 10; Ly = 10 #size of the space
 dim = [Lx,Ly]
 mass = 1.0
-np = 500 #number of particles
+np = 1000 #number of particles
 Tr = 0.5 #reference temperature
 τ = 0.01
 tmax = 100
