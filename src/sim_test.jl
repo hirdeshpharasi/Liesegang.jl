@@ -8,10 +8,11 @@ using Plots #plotting package
 #defining the parameters
 Lx = 10; Ly = 10 #size of the space
 dim = [Lx,Ly]
+a = 1.0 #size of the boxes, default = 1
 mass = 1.0
 np = 1000 #number of particles
-Tr = 0.5 #reference temperature
-τ = 0.005
+Tr = 1/3 #reference temperature
+τ = 1.73
 tmax = 500
 angles = [90.0, 130.0, 180.0]
 ################################################################################
@@ -33,7 +34,7 @@ anim = @animate for _ in 1:tmax
     #moving the particles
     α = rand(0.0:180.0)*rand([-1,1]) #random angle
     #rotating...
-    parts_vels!(parts, boxes, α)
+    parts_vels!(parts, boxes, α, a, dim)
     #now getting the new positions of the particles
     getpos_pbc!(parts, τ, dim)
     x = [parts[i].pos[1] for i in 1:np]

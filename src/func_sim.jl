@@ -27,13 +27,33 @@ function box_vel(parts::Array{particle,1},boxes::Array{box,1})
     end
 end
 ################################################################################
+#function of the shifting, actually you shift the positions of the particles.
+function shift_grid!(parts::Array{particle,1},a::Float64, dim::Array{Int64,1})
+    δx = rand()*rand(-a/2:a/2)
+    δy = rand()*rand(-a/2:a/2)
+    for p in parts
+        p.pos[1] = mod(p.pos[1] + δx, dim[1])
+        p.pos[2] = mod(p.pos[2] + δy, dim[2])
+    end
+    return [δx, δy]
+end
+#now we need to shift back the particles.
+function shiftback_grid!(parts::Array{particle,1}, dim::Array{Int64,1}, δ::Array{Float64,1})
+    for p in parts
+        p.pos[1] = mod(p.pos[1] + δ[1], dim[1])
+        p.pos[2] = mod(p.pos[2] + δ[2], dim[2])
+    end
+end
+################################################################################
 #computing the new velocities of the particles
-function parts_vels!(parts::Array{particle,1}, boxes::Array{box,1}, α::Float64)
+function parts_vels!(parts::Array{particle,1}, boxes::Array{box,1}, α::Float64, a::Float64, dim::Array{Int64,1})
+    δ = shift_grid!(parts, a, dim) #shifting the particles
     for p in parts #loop over all particles
         v = p.vel - boxes[p.indbox].vel #extraction of the velocity of the box
         vn = rotate_vec(v, α) #rotation of the vector
         p.vel = vn + boxes[p.indbox].vel #adding the vector and the velocity of the box
     end
+    shiftback_grid!(parts, dim, δ) #getting the particles back to their original positions.
 end
 ################################################################################
 #getting new positions of the particles with periodic boundary conditions (pbc)
@@ -67,9 +87,4 @@ function norm_temperature!(parts::Array{particle,1}, Tr::Float64)
     for p in parts
         p.vel = p.vel * sqrt(Tr / T) #multiplying each velocity for the factor of sqrt(Ttarget/Tactual)
     end
-end
-################################################################################
-#function of the shifting
-function shift_grid()
-
 end
