@@ -68,3 +68,8 @@ function norm_temperature!(parts::Array{particle,1}, Tr::Float64)
         p.vel = p.vel * sqrt(Tr / T) #multiplying each velocity for the factor of sqrt(Ttarget/Tactual)
     end
 end
+################################################################################
+#function of the shifting
+function shift_grid()
+
+end

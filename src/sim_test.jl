@@ -11,8 +11,9 @@ dim = [Lx,Ly]
 mass = 1.0
 np = 1000 #number of particles
 Tr = 0.5 #reference temperature
-τ = 0.01
-tmax = 100
+τ = 0.005
+tmax = 500
+angles = [90.0, 130.0, 180.0]
 ################################################################################
 ###########                       INITIALIZING                       ###########
 
