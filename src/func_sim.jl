@@ -1,4 +1,6 @@
 ################################################################################
+##################### MODULES FOR MULTI PARTICLE COLLISIONS ####################
+################################################################################
 #This is to get the number of box where the particle is.
 function get_box(parts::Array{particle,1}, Lx::Int64)
     for p in parts
@@ -28,7 +30,7 @@ function box_vel(parts::Array{particle,1},boxes::Array{box,1})
     end
 end
 ################################################################################
-#function of the shifting, actually you shift the positions of the particles.
+#function of the shifting, actually you shift the positions of the particles. 
 function shift_grid!(parts::Array{particle,1},a::Float64, dim::Array{Int64,1})
     δx = rand()*rand(-a/2:a/2)
     δy = rand()*rand(-a/2:a/2)
