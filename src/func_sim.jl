@@ -15,6 +15,7 @@ end
 #computing the momentum of the boxes
 function box_vel(parts::Array{particle,1},boxes::Array{box,1})
     for (i, box) in enumerate(boxes) #this is for enumerating the boxes
+        box.vel = zeros(2)
         tmass = 0 #initializating the total mass of the box
         for p in filter(x-> x.indbox == i, parts) #the loop is made in the particles inside the box i
             #println("inside the filter ", i)
@@ -46,14 +47,13 @@ function shiftback_grid!(parts::Array{particle,1}, dim::Array{Int64,1}, δ::Arra
 end
 ################################################################################
 #computing the new velocities of the particles
-function parts_vels!(parts::Array{particle,1}, boxes::Array{box,1}, α::Float64, a::Float64, dim::Array{Int64,1})
-    δ = shift_grid!(parts, a, dim) #shifting the particles
+function parts_vels!(parts::Array{particle,1}, boxes::Array{box,1}, angles::Array{Float64,1})
     for p in parts #loop over all particles
         v = p.vel - boxes[p.indbox].vel #extraction of the velocity of the box
+        α = rand(angles)*rand([-1,1]) #the rotation angle
         vn = rotate_vec(v, α) #rotation of the vector
         p.vel = vn + boxes[p.indbox].vel #adding the vector and the velocity of the box
     end
-    shiftback_grid!(parts, dim, δ) #getting the particles back to their original positions.
 end
 ################################################################################
 #getting new positions of the particles with periodic boundary conditions (pbc)
