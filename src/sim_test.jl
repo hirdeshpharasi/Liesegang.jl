@@ -6,14 +6,14 @@ using Liesegang
 using Plots #plotting package
 ################################################################################
 #defining the parameters
-Lx = 4; Ly = 4 #size of the space
+Lx = 10; Ly = 10 #size of the space
 dim = [Lx,Ly]
 a = 1.0 #size of the boxes, default = 1
 mass = 1.0
-np = 60 #number of particles
+np = 1000 #number of particles
 Tr = 1/3 #reference temperature
 τ = 1.73
-tmax = 500
+tmax = 1000
 angles = [90.0, 130.0, 180.0]
 ################################################################################
 ###########                       INITIALIZING                       ###########
@@ -44,12 +44,12 @@ anim = @animate for t in 1:tmax
     shiftback_grid!(parts, dim, δ)
     #now getting the new positions of the particles
     getpos_pbc!(parts, τ, dim)
-    x = [parts[i].pos[1] for i in 1:20]
-    y = [parts[i].pos[2] for i in 1:20]
-    x1 = [parts[i].pos[1] for i in 31:np]
-    y1 = [parts[i].pos[2] for i in 31:np]
+    x = [parts[i].pos[1] for i in 1:np]
+    y = [parts[i].pos[2] for i in 1:np]
+    #x1 = [parts[i].pos[1] for i in 31:np]
+    #y1 = [parts[i].pos[2] for i in 31:np]
     scatter(x,y)
-    scatter!(x1,y1)
+    #scatter!(x1,y1)
 end
 gif(anim, "testshift.gif", fps = 10)
 #x = [parts[i].pos[1] for i in 1:np]
