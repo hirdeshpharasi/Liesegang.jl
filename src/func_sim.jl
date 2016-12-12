@@ -72,6 +72,9 @@ function getpos_slip!(parts::Array{particle,1}, τ::Float64, dim::Array{Int64,1}
         if p.pos[1] + p.vel[1] * τ > dim[1]
             dif = p.pos[1] + p.vel[1] * τ - dim[1]
             p.pos[1] = p.pos[1] - dif
+        elseif p.pos[1] + p.vel[1] * τ < 0
+            dif = abs(p.pos[1] + p.vel[1] * τ)
+            p.pos[1] = dif
         else
             p.pos[1] = p.pos[1] + p.vel[1] * τ
         end
@@ -79,6 +82,9 @@ function getpos_slip!(parts::Array{particle,1}, τ::Float64, dim::Array{Int64,1}
         if p.pos[2] + p.vel[2] * τ > dim[2]
             dif = p.pos[2] + p.vel[2] * τ - dim[2]
             p.pos[2] = p.pos[2] - dif
+        elseif p.pos[2] + p.vel[2] * τ < 0
+            dif = abs(p.pos[2] + p.vel[2] * τ)
+            p.pos[2] = dif
         else
             p.pos[2] = p.pos[2] + p.vel[2] * τ
         end

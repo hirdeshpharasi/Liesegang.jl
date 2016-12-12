@@ -13,7 +13,7 @@ mass = 1.0
 np = 300 #number of particles
 Tr = 1/3 #reference temperature
 τ = 1.73
-tmax = 1000
+tmax = 200
 angles = [90.0, 130.0, 180.0]
 ################################################################################
 ###########                       INITIALIZING                       ###########
@@ -46,7 +46,8 @@ anim = @animate for t in 1:tmax
     y = [parts[i].pos[2] for i in 1:np]
     #x1 = [parts[i].pos[1] for i in 301:np]
     #y1 = [parts[i].pos[2] for i in 301:np]
-    quiver([x,y], quiver = ([parts[i].pos[1] for i in 1:np],[parts[i].pos[2] for i in 1:np]))
+    #quiver([x,y], quiver = ([parts[i].pos[1] for i in 1:np],[parts[i].pos[2] for i in 1:np]))
     #scatter!(x1,y1)
 end
+
 gif(anim, "testquiver.gif", fps = 8)
