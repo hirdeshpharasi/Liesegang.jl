@@ -30,7 +30,7 @@ function box_vel(parts::Array{particle,1},boxes::Array{box,1})
     end
 end
 ################################################################################
-#function of the shifting, actually you shift the positions of the particles. 
+#function of the shifting, actually you shift the positions of the particles.
 function shift_grid!(parts::Array{particle,1},a::Float64, dim::Array{Int64,1})
     δx = rand()*rand(-a/2:a/2)
     δy = rand()*rand(-a/2:a/2)
@@ -63,6 +63,25 @@ function getpos_pbc!(parts::Array{particle,1}, τ::Float64, dim::Array{Int64,1})
     for p in parts
         p.pos[1] = mod(p.pos[1] + p.vel[1] * τ , dim[1]) #to get the periodic boundary conditions.
         p.pos[2] = mod(p.pos[2] + p.vel[2] * τ , dim[2])
+    end
+end
+#with slip walls
+function getpos_slip!(parts::Array{particle,1}, τ::Float64, dim::Array{Int64,1})
+    for p in  parts
+        #doing the bouncing on the x axis
+        if p.pos[1] + p.vel[1] * τ > dim[1]
+            dif = p.pos[1] + p.vel[1] * τ - dim[1]
+            p.pos[1] = p.pos[1] - dif
+        else
+            p.pos[1] = p.pos[1] + p.vel[1] * τ
+        end
+        #now the bouncing on the y axis
+        if p.pos[2] + p.vel[2] * τ > dim[2]
+            dif = p.pos[2] + p.vel[2] * τ - dim[2]
+            p.pos[2] = p.pos[2] - dif
+        else
+            p.pos[2] = p.pos[2] + p.vel[2] * τ
+        end
     end
 end
 ################################################################################

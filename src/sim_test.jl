@@ -6,11 +6,11 @@ using Liesegang
 using Plots #plotting package
 ################################################################################
 #defining the parameters
-Lx = 10; Ly = 10 #size of the space
+Lx = 4; Ly = 4 #size of the space
 dim = [Lx,Ly]
 a = 1.0 #size of the boxes, default = 1
 mass = 1.0
-np = 1000 #number of particles
+np = 300 #number of particles
 Tr = 1/3 #reference temperature
 τ = 1.73
 tmax = 1000
@@ -36,22 +36,17 @@ anim = @animate for t in 1:tmax
     get_box(parts, Lx)
     #the momentums and rotations are computed
     box_vel(parts,boxes)
-    #if t < 100
-    #    println([parts[i].vel' for i in 1:np])
-    #end
     parts_vels!(parts, boxes, angles)
     #shifting back the particles to their original places
     shiftback_grid!(parts, dim, δ)
     #now getting the new positions of the particles
-    getpos_pbc!(parts, τ, dim)
+    #getpos_pbc!(parts, τ, dim)
+    getpos_slip!(parts, τ, dim)
     x = [parts[i].pos[1] for i in 1:np]
     y = [parts[i].pos[2] for i in 1:np]
-    #x1 = [parts[i].pos[1] for i in 31:np]
-    #y1 = [parts[i].pos[2] for i in 31:np]
-    scatter(x,y)
+    #x1 = [parts[i].pos[1] for i in 301:np]
+    #y1 = [parts[i].pos[2] for i in 301:np]
+    quiver([x,y], quiver = ([parts[i].pos[1] for i in 1:np],[parts[i].pos[2] for i in 1:np]))
     #scatter!(x1,y1)
 end
-gif(anim, "testshift.gif", fps = 10)
-#x = [parts[i].pos[1] for i in 1:np]
-#y = [parts[i].pos[2] for i in 1:np]
-#writedlm("endpositions.dat", [x y])
+gif(anim, "testquiver.gif", fps = 8)
