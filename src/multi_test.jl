@@ -1,6 +1,7 @@
 #####################           TEST            ################################
 #This program is a test code for the Liesegang package, it is a simple model based
 #on the Stochastic Rotation Dynamics model.
+#Here the idea is to have two kinds of particles, A and B
 #loading the package Liesegang.jl
 using Liesegang
 using Plots #plotting package
@@ -9,8 +10,8 @@ using Plots #plotting package
 Lx = 5; Ly = 3 #size of the space
 dim = [Lx,Ly]
 a = 1.0 #size of the boxes, default = 1
-mass = 1.0
-np = 200 #number of particles
+mass = [1.0, 1.5]
+np = [200,200] #number of particles
 Tr = 1/3 #reference temperature
 τ = 1.4 #1.73
 tmax = 500
@@ -48,7 +49,7 @@ anim = @animate for t in 1:tmax
     #y1 = [parts[i].pos[2] for i in 301:np]
     vx = [parts[i].vel[1]/3 for i in 1:np] #dividing the vectors by a factor of 3 just for the visualization.
     vy = [parts[i].vel[2]/3 for i in 1:np]
-    quiver(x, y, quiver = (vx, vy), xlims =(0,Lx), ylims = (0,Ly), aspect_ratio=1)
+    quiver(x, y, quiver = (vx, vy), xlims =(0,Lx), ylims = (0,Ly))
     #scatter(x,y)
 end
 
