@@ -47,10 +47,10 @@ function shiftback_grid!(parts::Array{particle,1})
     end
 end
 ################################################################################
-#computing the new velocities of the particles
+#computing the new velocities of the particles, collisions.
 function parts_vels!(parts::Array{particle,1}, boxes::Array{box,1}, angles::Array{Float64,1})
     for p in parts #loop over all particles
-        if boxes[p.indbox].vel = 0.0; continue; end #just to be sure particle wont collide with nothing
+        if boxes[p.indbox].vel == 0.0; continue; end #just to be sure particle wont collide with nothing
         v = p.vel - boxes[p.indbox].vel #extraction of the velocity of the box
         α = rand(angles)*rand([-1,1]) #the rotation angle
         vn = rotate_vec(v, α) #rotation of the vector
