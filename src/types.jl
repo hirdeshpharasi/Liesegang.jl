@@ -12,6 +12,14 @@ type particle
         this.indbox = ceil(this.pos[1]) + dim[1] * (ceil(this.pos[2])-1)
         return this
     end
+    function particle(x::Int64,dim::Array{Int64,1}, m::Float64)
+        this = new()
+        this.pos = [rand()+(x-1),rand()* dim[2]]
+        this.vel = rand(2)
+        this.mass = m
+        this.indbox = ceil(this.pos[1]) + dim[1] * (ceil(this.pos[2])-1)
+        return this
+    end
 end
 #definition of a box
 type box
