@@ -4,7 +4,7 @@
 #This is to get the number of box where the particle is.
 function get_box(parts::Array{particle,1}, Lx::Int64)
     for p in parts
-        p.indbox = ceil(p.pos[1]) + Lx * (ceil(p.pos[2])-1)
+        p.indbox = ceil(p.pgrid[1]) + Lx * (ceil(p.pgrid[2])-1)
     end
 end
 ################################################################################
@@ -35,16 +35,15 @@ function shift_grid!(parts::Array{particle,1},a::Float64, dim::Array{Int64,1})
     δx = rand()*rand(-a/2:a/2)
     δy = rand()*rand(-a/2:a/2)
     for p in parts
-        p.pos[1] = mod(p.pos[1] + δx, dim[1])
-        p.pos[2] = mod(p.pos[2] + δy, dim[2])
+        p.pgrid[1] = mod(p.pos[1] + δx, dim[1])
+        p.pgrid[2] = mod(p.pos[2] + δy, dim[2])
     end
-    return [δx, δy]
 end
 #now we need to shift back the particles.
-function shiftback_grid!(parts::Array{particle,1}, dim::Array{Int64,1}, δ::Array{Float64,1})
+function shiftback_grid!(parts::Array{particle,1})
     for p in parts
-        p.pos[1] = mod(p.pos[1] + δ[1], dim[1])
-        p.pos[2] = mod(p.pos[2] + δ[2], dim[2])
+        p.pgrid[1] = p.pos[1]
+        p.pgrid[2] = p.pos[2]
     end
 end
 ################################################################################
@@ -71,20 +70,20 @@ function getpos_slip!(parts::Array{particle,1}, τ::Float64, dim::Array{Int64,1}
         #doing the bouncing on the x axis
         if p.pos[1] + p.vel[1] * τ > dim[1]
             dif = p.pos[1] + p.vel[1] * τ - dim[1]
-            p.pos[1] = p.pos[1] - dif
+            p.pos[1] = dim[1] - dif
         elseif p.pos[1] + p.vel[1] * τ < 0
             dif = abs(p.pos[1] + p.vel[1] * τ)
-            p.pos[1] = dif
+            p.pos[1] = 0 + dif
         else
             p.pos[1] = p.pos[1] + p.vel[1] * τ
         end
         #now the bouncing on the y axis
         if p.pos[2] + p.vel[2] * τ > dim[2]
             dif = p.pos[2] + p.vel[2] * τ - dim[2]
-            p.pos[2] = p.pos[2] - dif
+            p.pos[2] = dim[2] - dif
         elseif p.pos[2] + p.vel[2] * τ < 0
             dif = abs(p.pos[2] + p.vel[2] * τ)
-            p.pos[2] = dif
+            p.pos[2] = 0 + dif
         else
             p.pos[2] = p.pos[2] + p.vel[2] * τ
         end

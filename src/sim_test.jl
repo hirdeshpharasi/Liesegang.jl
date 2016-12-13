@@ -28,17 +28,17 @@ boxes = [box() for _ in 1:(Lx * Ly)]
 
 ################################################################################
 #########################    now the simulation...   ###########################
-#computing the momentum of each box
+
 anim = @animate for t in 1:tmax
     #first the grid is shifted
-    δ = shift_grid!(parts, a, dim)
+    shift_grid!(parts, a, dim)
     #now label the particles in the boxes
     get_box(parts, Lx)
     #the momentums and rotations are computed
     box_vel(parts,boxes)
     parts_vels!(parts, boxes, angles)
     #shifting back the particles to their original places
-    shiftback_grid!(parts, dim, δ)
+    shiftback_grid!(parts)
     #now getting the new positions of the particles
     #getpos_pbc!(parts, τ, dim)
     getpos_slip!(parts, τ, dim)
