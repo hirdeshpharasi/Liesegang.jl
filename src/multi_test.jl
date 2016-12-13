@@ -38,11 +38,11 @@ anim = @animate for t in 1:tmax
     #the momentums and rotations are computed
     box_vel(parts,boxes)
     parts_vels!(parts, boxes, angles)
-    #shifting back the particles to their original places
-    shiftback_grid!(parts)
     #now getting the new positions of the particles
     #getpos_pbc!(parts, τ, dim)
     getpos_slip!(parts, τ, dim)
+    #shifting back the particles to their original places
+    shiftback_grid!(parts)
     x = [parts[i].pos[1] for i in 1:np[1]]
     y = [parts[i].pos[2] for i in 1:np[1]]
     x1 = [parts[i].pos[1] for i in (np[1]+1):(np[2]+np[1])]
