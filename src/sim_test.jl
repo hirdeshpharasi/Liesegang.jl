@@ -30,6 +30,8 @@ boxes = [box() for _ in 1:(Lx * Ly)]
 #########################    now the simulation...   ###########################
 
 anim = @animate for t in 1:tmax
+    #streaming step
+    getpos_slip!(parts, τ, dim)
     #first the grid is shifted
     shift_grid!(parts, a, dim)
     #now label the particles in the boxes
@@ -39,9 +41,7 @@ anim = @animate for t in 1:tmax
     parts_vels!(parts, boxes, angles)
     #shifting back the particles to their original places
     shiftback_grid!(parts)
-    #now getting the new positions of the particles
     #getpos_pbc!(parts, τ, dim)
-    getpos_slip!(parts, τ, dim)
     x = [parts[i].pos[1] for i in 1:np]
     y = [parts[i].pos[2] for i in 1:np]
     #x1 = [parts[i].pos[1] for i in 301:np]

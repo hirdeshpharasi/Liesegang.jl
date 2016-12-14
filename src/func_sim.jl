@@ -50,7 +50,6 @@ end
 #computing the new velocities of the particles, collisions.
 function parts_vels!(parts::Array{particle,1}, boxes::Array{box,1}, angles::Array{Float64,1})
     for p in parts #loop over all particles
-        if boxes[p.indbox].vel == 0.0; continue; end #just to be sure particle wont collide with nothing
         v = p.vel - boxes[p.indbox].vel #extraction of the velocity of the box
         α = rand(angles)*rand([-1,1]) #the rotation angle
         vn = rotate_vec(v, α) #rotation of the vector
@@ -71,10 +70,12 @@ function getpos_slip!(parts::Array{particle,1}, τ::Float64, dim::Array{Int64,1}
         #doing the bouncing on the x axis
         if p.pos[1] + p.vel[1] * τ > dim[1]
             dif = p.pos[1] + p.vel[1] * τ - dim[1]
-            p.pos[1] = dim[1] - dif
+            p.pos[1] = dim[1] - dif #it moves back
+            p.vel[1] = -p.vel[1] #changing direction of velocity in x
         elseif p.pos[1] + p.vel[1] * τ < 0
             dif = abs(p.pos[1] + p.vel[1] * τ)
             p.pos[1] = 0 + dif
+            p.vel[1] = -p.vel[1] #changin direction of velocity in x
         else
             p.pos[1] = p.pos[1] + p.vel[1] * τ
         end
@@ -82,9 +83,11 @@ function getpos_slip!(parts::Array{particle,1}, τ::Float64, dim::Array{Int64,1}
         if p.pos[2] + p.vel[2] * τ > dim[2]
             dif = p.pos[2] + p.vel[2] * τ - dim[2]
             p.pos[2] = dim[2] - dif
+            p.vel[2] = -p.vel[2]
         elseif p.pos[2] + p.vel[2] * τ < 0
             dif = abs(p.pos[2] + p.vel[2] * τ)
             p.pos[2] = 0 + dif
+            p.vel[2] = -p.vel[2]
         else
             p.pos[2] = p.pos[2] + p.vel[2] * τ
         end

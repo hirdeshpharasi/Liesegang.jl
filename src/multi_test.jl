@@ -31,6 +31,8 @@ boxes = [box() for _ in 1:(Lx * Ly)]
 #########################    now the simulation...   ###########################
 
 anim = @animate for t in 1:tmax
+    #streaming step
+    getpos_slip!(parts, τ, dim)
     #first the grid is shifted
     shift_grid!(parts, a, dim)
     #now label the particles in the boxes
@@ -38,9 +40,7 @@ anim = @animate for t in 1:tmax
     #the momentums and rotations are computed
     box_vel(parts,boxes)
     parts_vels!(parts, boxes, angles)
-    #now getting the new positions of the particles
     #getpos_pbc!(parts, τ, dim)
-    getpos_slip!(parts, τ, dim)
     #shifting back the particles to their original places
     shiftback_grid!(parts)
     x = [parts[i].pos[1] for i in 1:np[1]]
@@ -49,7 +49,7 @@ anim = @animate for t in 1:tmax
     y1 = [parts[i].pos[2] for i in (np[1]+1):(np[2]+np[1])]
     #vx = [parts[i].vel[1]/3 for i in 1:np] #dividing the vectors by a factor of 3 just for the visualization.
     #vy = [parts[i].vel[2]/3 for i in 1:np]
-    scatter(x,y, xlims = (0,Lx), ylims = (0,Ly), size = (Lx*10,Ly*100))
+    scatter(x,y, xlims = (0,Lx), ylims = (0,Ly), size = (Lx*10,Ly*100), markersize = 4)
     scatter!(x1,y1)# xlims = (0,Lx), ylims = (0,Ly))
     #quiver(x, y, quiver = (vx, vy), xlims =(0,Lx), ylims = (0,Ly))
 end
