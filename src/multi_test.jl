@@ -10,7 +10,7 @@ using Plots #plotting package
 Lx = 1000; Ly = 10 #size of the space
 dim = [Lx,Ly]
 a = 1.0 #size of the boxes, default = 1
-m = [1.0, 1.5] #masses
+m = [1.0, 2.0] #masses
 np = [10,2500] #number of particles
 Tr = 1/3 #reference temperature
 τ = 1.73 #1.73
