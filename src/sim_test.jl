@@ -48,7 +48,7 @@ anim = @animate for t in 1:tmax
     #y1 = [parts[i].pos[2] for i in 301:np]
     vx = [parts[i].vel[1]/3 for i in 1:np] #dividing the vectors by a factor of 3 just for the visualization.
     vy = [parts[i].vel[2]/3 for i in 1:np]
-    quiver(x, y, quiver = (vx, vy), xlims =(0,Lx), ylims = (0,Ly), aspect_ratio=1)
+    quiver(x, y, quiver = (vx, vy), xlims =(0,Lx), ylims = (0,Ly))
     #scatter(x,y)
 end
 

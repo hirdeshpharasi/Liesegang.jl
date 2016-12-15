@@ -11,7 +11,7 @@ Lx = 1000; Ly = 10 #size of the space
 dim = [Lx,Ly]
 a = 1.0 #size of the boxes, default = 1
 m = [1.0, 1.5] #masses
-np = [2500,2500] #number of particles
+np = [10,2500] #number of particles
 Tr = 1/3 #reference temperature
 τ = 1.73 #1.73
 tmax = 500
@@ -49,7 +49,7 @@ anim = @animate for t in 1:tmax
     y1 = [parts[i].pos[2] for i in (np[1]+1):(np[2]+np[1])]
     #vx = [parts[i].vel[1]/3 for i in 1:np] #dividing the vectors by a factor of 3 just for the visualization.
     #vy = [parts[i].vel[2]/3 for i in 1:np]
-    scatter(x,y, xlims = (0,Lx), ylims = (0,Ly), size = (Lx*10,Ly*100), markersize = 4)
+    scatter(x,y, xlims = (0,Lx), ylims = (0,Ly), size = (Lx,Ly*10))
     scatter!(x1,y1)# xlims = (0,Lx), ylims = (0,Ly))
     #quiver(x, y, quiver = (vx, vy), xlims =(0,Lx), ylims = (0,Ly))
 end
