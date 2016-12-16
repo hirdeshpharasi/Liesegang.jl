@@ -118,3 +118,9 @@ function norm_temperature!(parts::Array{particle,1}, Tr::Float64)
         p.vel = p.vel * sqrt(Tr / T) #multiplying each velocity for the factor of sqrt(Ttarget/Tactual)
     end
 end
+################################################################################
+#reaction
+function reac_box!(parts::Array{particle,1}, boxes::Array{box,1}, np::Array{Int64,1})
+
+
+end
