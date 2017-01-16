@@ -30,6 +30,24 @@ function box_vel(parts::Array{particle,1},boxes::Array{box,1})
     end
 end
 ################################################################################
+#This is for the collisions of the particles of equal mass or same particles
+function box_velmc(parts::Array{particle,1},boxes::Array{box,1}, m::Array{Float64,1})
+    for (i, box) in enumerate(boxes) #this is for enumerating the boxes
+        for j in m #cycling over the different masses.
+            box.vel = zeros(2)
+            tmass = 0 #initializating the total mass of the box
+            for p in filter(x-> x.indbox == i && x.mass == j , parts) #the loop is made in the particles inside the box i
+                #println("inside the filter ", i)
+                box.vel += p.mass * p.vel #sums the momentums of all particles
+                tmass += p.mass #sums the mass
+            end
+            if tmass != 0
+            box.vel /= tmass #normalize the momentum of the box with the mass of the particles.
+            end
+        end
+    end
+end
+################################################################################
 #function of the shifting, actually you shift the positions of the particles.
 function shift_grid!(parts::Array{particle,1},a::Float64, dim::Array{Int64,1})
     δx = rand()*rand(-a/2:a/2)
