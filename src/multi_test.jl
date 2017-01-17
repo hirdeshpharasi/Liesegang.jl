@@ -14,7 +14,7 @@ m = [1.0, 2.0] #masses
 np = [5000,5000] #number of particles
 Tr = 1/3 #reference temperature
 τ = 1.73 #1.73
-tmax = 900
+tmax = 800
 angles = [90.0, 90.0]
 ################################################################################
 ###########                       INITIALIZING                       ###########
@@ -41,8 +41,6 @@ anim = @animate for t in 1:tmax
     box_vel(parts,boxes)
     parts_vels!(parts, boxes, angles)
     #now the same especies
-    get_box(parts, Lx)
-    #now the same especies
     box_velmc(parts,boxes,m)
     parts_vels!(parts,boxes,angles)
     #getpos_pbc!(parts, τ, dim)
@@ -59,4 +57,4 @@ anim = @animate for t in 1:tmax
     #quiver(x, y, quiver = (vx, vy), xlims =(0,Lx), ylims = (0,Ly))
 end
 
-gif(anim, "testmulti.gif", fps = 7)
+gif(anim, "testmulti.gif", fps = 8)

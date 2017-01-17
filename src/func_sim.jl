@@ -7,6 +7,9 @@ function get_box(parts::Array{particle,1}, Lx::Int64)
         p.indbox = ceil(p.pgrid[1]) + Lx * (ceil(p.pgrid[2])-1)
     end
 end
+function get_partsbox(parts::Array{particle,1}, boxes::Array{box,1})
+
+end
 ################################################################################
 #rotation function
 function rotate_vec(v::Array{Float64,1}, α::Float64)
