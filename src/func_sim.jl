@@ -2,13 +2,14 @@
 ##################### MODULES FOR MULTI PARTICLE COLLISIONS ####################
 ################################################################################
 #This is to get the number of box where the particle is.
-function get_box(parts::Array{particle,1}, Lx::Int64)
+function get_box(parts::Array{particle,1}, boxes::Array{box,1}, Lx::Int64)
+    for box in boxes
+        box.np[:] = 0
+    end
     for p in parts
         p.indbox = ceil(p.pgrid[1]) + Lx * (ceil(p.pgrid[2])-1)
+        boxes[p.indbox].np[p.tp] += 1
     end
-end
-function get_partsbox(parts::Array{particle,1}, boxes::Array{box,1})
-
 end
 ################################################################################
 #rotation function
@@ -18,7 +19,7 @@ function rotate_vec(v::Array{Float64,1}, α::Float64)
 end
 ################################################################################
 #computing the momentum of the boxes
-function box_vel(parts::Array{particle,1},boxes::Array{box,1})
+function box_vel(parts::Array{particle,1},box::Array{box,1})
     for (i, box) in enumerate(boxes) #this is for enumerating the boxes
         box.vel = zeros(2)
         tmass = 0 #initializating the total mass of the box
@@ -36,6 +37,7 @@ end
 #This is for the collisions of the particles of equal mass or same particles
 function box_velmc(parts::Array{particle,1},boxes::Array{box,1}, m::Array{Float64,1})
     for (i, box) in enumerate(boxes) #this is for enumerating the boxes
+        if contnz(box.np) <= 1; continue; end
         for j in m #cycling over the different masses.
             box.vel = zeros(2)
             tmass = 0 #initializating the total mass of the box
@@ -47,10 +49,46 @@ function box_velmc(parts::Array{particle,1},boxes::Array{box,1}, m::Array{Float6
             if tmass != 0
             box.vel /= tmass #normalize the momentum of the box with the mass of the particles.
             end
+
         end
     end
 end
 ################################################################################
+#collision in the new way.
+function collide_mc(parts::Array{particle,1})
+    vel = zeros(2)
+    tmass = 0 #initializating the total mass of the box
+    for p in parts #the loop is made in the particles inside the box
+        vel += p.mass * p.vel #sums the momentums of all particles
+        tmass += p.mass #sums the mass
+    end
+    vel /= tmass #normalize the momentum of the box with the mass of the particles.
+    for p in parts #loop over all particles
+        v = p.vel - vel #extraction of the velocity of the box
+        α = 90.0*rand([-1,1]) #the rotation angle
+        vn = rotate_vec(v, α) #rotation of the vector
+        p.vel = vn + vel #adding the vector and the velocity of the box
+    end
+end
+function collide_sc(parts::Array{particle,1}, m)
+    for j in m
+        vel = zeros(2)
+        tmass = 0
+        sp = filter(x-> x.mass == j, parts)
+        if isempty(sp); continue; end
+        for p in sp
+            vel += p.mass
+            tmass += p.mass
+        end
+        vel /= tmass
+        for p in parts #loop over all particles
+            v = p.vel - vel #extraction of the velocity of the box
+            α = 90.0*rand([-1,1]) #the rotation angle
+            vn = rotate_vec(v, α) #rotation of the vector
+            p.vel = vn + vel #adding the vector and the velocity of the box
+        end
+    end
+end
 #function of the shifting, actually you shift the positions of the particles.
 function shift_grid!(parts::Array{particle,1},a::Float64, dim::Array{Int64,1})
     δx = rand()*rand(-a/2:a/2)

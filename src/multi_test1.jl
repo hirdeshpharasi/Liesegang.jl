@@ -7,7 +7,7 @@ using Liesegang
 using Plots #plotting package
 ################################################################################
 #defining the parameters
-Lx = 1000; Ly = 10 #size of the space
+Lx = 100; Ly = 10 #size of the space
 dim = [Lx,Ly]
 a = 1.0 #size of the boxes, default = 1
 m = [1.0, 2.0] #masses
@@ -19,13 +19,13 @@ angles = [90.0, 90.0]
 ################################################################################
 ###########                       INITIALIZING                       ###########
 
-parts = vcat([particle(1,dim, m[1],1) for _ in 1:np[1]], [particle(Lx,dim,m[1],2) for _ in 1:np[2]]) #initializing the particles.
+parts = vcat([particle(1,dim, m[1]) for _ in 1:np[1]], [particle(Lx,dim,m[1]) for _ in 1:np[2]]) #initializing the particles.
 #normalizing the momentum
 norm_momentum!(parts)
 #now the temperature to the reference Tr
 norm_temperature!(parts, Tr)
 #initializing the boxes
-boxes = [box(m) for _ in 1:(Lx * Ly)]
+boxes = [box() for _ in 1:(Lx * Ly)]
 
 ################################################################################
 #########################    now the simulation...   ###########################
@@ -36,16 +36,14 @@ anim = @animate for t in 1:tmax
     #first the grid is shifted
     shift_grid!(parts, a, dim)
     #now label the particles in the boxes
-    get_box(parts,boxes, Lx)
-    for (i, box) in enumerate(boxes) #cycling over the boxes
-        parbox = filter(x-> x.indbox == i, parts) #selecting the particles that are in the box.
-        if isempty(parbox); continue; end  #ignore next steps if the box is empty
-        collide_mc(parbox)
-        if countnz(box.np) > 1
-            collide_sc(parbox, m)
-        end
-        getpos_slip!(parbox, τ, dim)
-    end
+    get_box(parts, Lx)
+    #the momentums and rotations are computed for every specie
+    box_vel(parts,boxes)
+    parts_vels!(parts, boxes, angles)
+    #now the same especies
+    box_velmc(parts,boxes,m)
+    parts_vels!(parts,boxes,angles)
+    #getpos_pbc!(parts, τ, dim)
     #shifting back the particles to their original places
     shiftback_grid!(parts)
     x = [parts[i].pos[1] for i in 1:np[1]]

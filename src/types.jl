@@ -5,32 +5,36 @@ type particle
     vel::Array{Float64,1} #velocities
     mass::Float64 #mass
     indbox::Int64 #the box where the particle is
-    function particle(dim::Array{Int64,1}, m::Float64)
+    tp::Int64
+    function particle(dim::Array{Int64,1}, m::Float64, tp::Int64)
         this = new()
         this.pos = rand(2) .* dim
         this.pgrid = this.pos[:]
         this.vel = rand(2)
         this.mass = m
         this.indbox = ceil(this.pos[1]) + dim[1] * (ceil(this.pos[2])-1)
+        this.tp = tp
         return this
     end
-    function particle(x::Int64,dim::Array{Int64,1}, m::Float64)
+    function particle(x::Int64,dim::Array{Int64,1}, m::Float64, tp::Int64)
         this = new()
         this.pos = [rand()+(x-1),rand()* dim[2]]
         this.pgrid = this.pos[:]
         this.vel = rand(2)
         this.mass = m
         this.indbox = ceil(this.pos[1]) + dim[1] * (ceil(this.pos[2])-1)
+        this.tp = tp
         return this
     end
 end
 #definition of a box
 type box
     vel::Array{Float64,1} # the velocity of the box.
-    #npart::Int64  not really sure if is neccesary to have the number of particles of each box.
-    function box()
+    np::Array{Int64,1}#  not really sure if is neccesary to have the number of particles of each box.
+    function box(m::Array{Float64,1})
         this = new()
         this.vel = zeros(2)
+        this.np = zeros(Int64,length(m))
         return this
     end
 end
