@@ -11,10 +11,10 @@ Lx = 1000; Ly = 10 #size of the space
 dim = [Lx,Ly]
 a = 1.0 #size of the boxes, default = 1
 m = [1.0, 2.0] #masses
-np = [5000,5000] #number of particles
+np = [25000,25000] #number of particles
 Tr = 1/3 #reference temperature
 τ = 1.73 #1.73
-tmax = 800
+tmax = 900
 angles = [90.0, 90.0]
 ################################################################################
 ###########                       INITIALIZING                       ###########
@@ -33,18 +33,20 @@ boxes = [box(m) for _ in 1:(Lx * Ly)]
 anim = @animate for t in 1:tmax
     #streaming step
     getpos_slip!(parts, τ, dim)
+    #getpos_pbc!(parts,τ,dim)
+    #quiver(x, y, quiver = (vx, vy), xlims =(0,Lx), ylims = (0,Ly))
     #first the grid is shifted
     shift_grid!(parts, a, dim)
     #now label the particles in the boxes
     get_box(parts,boxes, Lx)
     for (i, box) in enumerate(boxes) #cycling over the boxes
         parbox = filter(x-> x.indbox == i, parts) #selecting the particles that are in the box.
+        #println(i,'\t',length(parbox))
         if isempty(parbox); continue; end  #ignore next steps if the box is empty
         collide_mc(parbox)
         if countnz(box.np) > 1
             collide_sc(parbox, m)
         end
-        getpos_slip!(parbox, τ, dim)
     end
     #shifting back the particles to their original places
     shiftback_grid!(parts)
@@ -54,9 +56,9 @@ anim = @animate for t in 1:tmax
     y1 = [parts[i].pos[2] for i in (np[1]+1):(np[2]+np[1])]
     #vx = [parts[i].vel[1]/3 for i in 1:np] #dividing the vectors by a factor of 3 just for the visualization.
     #vy = [parts[i].vel[2]/3 for i in 1:np]
-    scatter(x,y, xlims = (0,Lx), ylims = (0,Ly), size = (Lx*5,Ly*20))
+    scatter(x,y, xlims = (0,Lx), ylims = (0,Ly), size = (Lx*20,Ly*20))
     scatter!(x1,y1)# xlims = (0,Lx), ylims = (0,Ly))
-    #quiver(x, y, quiver = (vx, vy), xlims =(0,Lx), ylims = (0,Ly))
 end
-
-gif(anim, "testmulti.gif", fps = 8)
+println(parts)
+println([parts[i].pos[1] for i in 1:np[1]])
+gif(anim, "testmulti2.gif", fps = 8)

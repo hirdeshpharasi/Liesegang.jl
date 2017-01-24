@@ -42,12 +42,16 @@ anim = @animate for t in 1:tmax
     getpos_slip!(parts, τ, dim)
     #first the grid is shifted
     shift_grid!(parts, a, dim)
-    #now label the particles in the boxes
-    get_box(parts, Lx)
-    #the momentums and rotations are computed
-    box_vel(parts,boxes)
-    parts_vels!(parts, boxes, angles)
-    #getpos_pbc!(parts, τ, dim)
+    get_box(parts,boxes, Lx)
+    for (i, box) in enumerate(boxes) #cycling over the boxes
+        parbox = filter(x-> x.indbox == i, parts) #selecting the particles that are in the box.
+        #println(i,'\t',length(parbox))
+        if isempty(parbox); continue; end  #ignore next steps if the box is empty
+        collide_mc(parbox)
+        if countnz(box.np) > 1
+            collide_sc(parbox, m)
+        end
+    end
     #shifting back the particles to their original places
     shiftback_grid!(parts)
     x = [parts[i].pos[1] for i in 1:np[1]]

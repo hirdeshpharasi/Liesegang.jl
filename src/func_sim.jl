@@ -19,7 +19,7 @@ function rotate_vec(v::Array{Float64,1}, α::Float64)
 end
 ################################################################################
 #computing the momentum of the boxes
-function box_vel(parts::Array{particle,1},box::Array{box,1})
+function box_vel(parts::Array{particle,1},boxes::Array{box,1})
     for (i, box) in enumerate(boxes) #this is for enumerating the boxes
         box.vel = zeros(2)
         tmass = 0 #initializating the total mass of the box
@@ -37,7 +37,7 @@ end
 #This is for the collisions of the particles of equal mass or same particles
 function box_velmc(parts::Array{particle,1},boxes::Array{box,1}, m::Array{Float64,1})
     for (i, box) in enumerate(boxes) #this is for enumerating the boxes
-        if contnz(box.np) <= 1; continue; end
+        if countnz(box.np) <= 1; continue; end
         for j in m #cycling over the different masses.
             box.vel = zeros(2)
             tmass = 0 #initializating the total mass of the box
@@ -77,7 +77,7 @@ function collide_sc(parts::Array{particle,1}, m)
         sp = filter(x-> x.mass == j, parts)
         if isempty(sp); continue; end
         for p in sp
-            vel += p.mass
+            vel += p.mass * p.vel
             tmass += p.mass
         end
         vel /= tmass
