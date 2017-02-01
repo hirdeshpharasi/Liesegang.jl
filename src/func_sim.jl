@@ -178,8 +178,23 @@ function norm_temperature!(parts::Array{particle,1}, Tr::Float64)
     end
 end
 ################################################################################
-#reaction
-function reac_box!(parts::Array{particle,1}, boxes::Array{box,1}, np::Array{Int64,1})
+#this function compute probabilities of P(n(t+1)|n(t)) and returns how many particles are going to react.
+function prob_box(np::Array{Int64}, kr::Float64)
+    nr = min(np[1],np[2]) #estimating minimum or maximum of reactions
+    p = zeros(nr+1) #array of probabilities
+    p[1] = 1 - kr #no-reaction case
+    for i=1:nr
+        p[i+1] = kr * ( factorial(np[1]) / factorial(np[1]-i) * factorial(np[2]) / factorial(np[2]-i) * factorial(np[3]) / factorial(np[3]+i) )
+    end
+    s = sum(p)
+    if s != 1
+        p = p / s
+    end
+    cs = cumsum(p); a = rand()
+    return findfirst(sort[a;cs])-1
+end
+################################################################################
+function reac_box!(parts::Array{particle,1}, np::Array{Int64,1})
 
 
 end
