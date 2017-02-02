@@ -183,7 +183,7 @@ function prob_box(np::Array{Int64}, kr::Float64)
     nr = min(np[1],np[2]) #estimating minimum or maximum of reactions
     p = zeros(nr+1) #array of probabilities
     p[1] = 1 - kr #no-reaction case
-    for i=1:nr
+    for i=2:nr
         p[i+1] = kr * ( factorial(np[1]) / factorial(np[1]-i) * factorial(np[2]) / factorial(np[2]-i) * factorial(np[3]) / factorial(np[3]+i) )
     end
     s = sum(p)
@@ -191,10 +191,16 @@ function prob_box(np::Array{Int64}, kr::Float64)
         p = p / s
     end
     cs = cumsum(p); a = rand()
-    return findfirst(sort[a;cs])-1
+    return findfirst(sort[a;cs],a)-1
 end
 ################################################################################
-function reac_box!(parts::Array{particle,1}, np::Array{Int64,1})
-
-
+function col_box(box::box,parts::Array{particle,1}, m::Array{Float64,1})
+    parbox = filter(x-> x.indbox == box.ind, parts) #selecting the particles that are in the box.
+    #println(i,'\t',length(parbox))
+    if isempty(parbox) == false #ignore next steps if the box is empty
+        collide_mc(parbox)
+        if countnz(box.np) > 1
+            collide_sc(parbox, m)
+        end
+    end
 end
