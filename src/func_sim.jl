@@ -204,3 +204,10 @@ function col_box(box::box,parts::Array{particle,1}, m::Array{Float64,1})
         end
     end
 end
+################################################################################
+function reac_box(parts::Array{particle,1}, nr::Int64)
+    pa = filter(x -> x.tp == 1, parts)
+    pb = filter(x -> x.tp == 2, parts)
+    pc = filter(x -> x.tp == 3, parts)
+
+end
