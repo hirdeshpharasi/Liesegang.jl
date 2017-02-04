@@ -70,11 +70,11 @@ function collide_mc(parts::Array{particle,1})
         p.vel = vn + vel #adding the vector and the velocity of the box
     end
 end
-function collide_sc(parts::Array{particle,1}, m)
-    for j in m
+function collide_sc(parts::Array{particle,1}, tp::Int64)
+    for j =1:tp
         vel = zeros(2)
         tmass = 0
-        sp = filter(x-> x.mass == j, parts)
+        sp = filter(x-> x.tp == j, parts)
         if isempty(sp); continue; end
         for p in sp
             vel += p.mass * p.vel
@@ -94,8 +94,13 @@ function shift_grid!(parts::Array{particle,1},a::Float64, dim::Array{Int64,1})
     δx = rand()*rand(-a/2:a/2)
     δy = rand()*rand(-a/2:a/2)
     for p in parts
-        p.pgrid[1] = mod(p.pos[1] + δx, dim[1])
-        p.pgrid[2] = mod(p.pos[2] + δy, dim[2])
+        #p.pgrid[1] = mod(p.pos[1] + δx, dim[1])
+        if p.pos[1] + δx > dim[1] || p.pos[1] + δx < 0
+            p.pgrid = p.pos
+        else
+            p.pgrid[1] = p.pos[1] + δx
+            p.pgrid[2] = mod(p.pos[2] + δy, dim[2])
+        end
     end
 end
 #now we need to shift back the particles.
@@ -181,17 +186,22 @@ end
 #this function compute probabilities of P(n(t+1)|n(t)) and returns how many particles are going to react.
 function prob_box(np::Array{Int64}, kr::Float64)
     nr = min(np[1],np[2]) #estimating minimum or maximum of reactions
-    p = zeros(nr+1) #array of probabilities
-    p[1] = 1 - kr #no-reaction case
-    for i=2:nr
-        p[i+1] = kr * ( factorial(np[1]) / factorial(np[1]-i) * factorial(np[2]) / factorial(np[2]-i) * factorial(np[3]) / factorial(np[3]+i) )
+    if nr != 0
+        p = zeros(nr+1) #array of probabilities
+        p[1] = 1 - kr #no-reaction case
+        for i=1:nr
+            p[i+1] = kr * ( factorial(big(np[1])) / factorial(big(np[1])-i) * factorial(big(np[2])) / factorial(big(np[2])-i) * factorial(big(np[3])) / factorial(big(np[3])+i) )
+        end
+        s = sum(p)
+        if s != 1
+            p = p / s
+        end
+        cs = cumsum(p); a = rand()
+        out = findfirst(sort([a;cs]),a)-1
+    else
+        out = 0
     end
-    s = sum(p)
-    if s != 1
-        p = p / s
-    end
-    cs = cumsum(p); a = rand()
-    return findfirst(sort[a;cs],a)-1
+    return out
 end
 ################################################################################
 function col_box(box::box,parts::Array{particle,1}, m::Array{Float64,1})
@@ -205,9 +215,33 @@ function col_box(box::box,parts::Array{particle,1}, m::Array{Float64,1})
     end
 end
 ################################################################################
+#next function is for the birth and death process of the reaction.
 function reac_box(parts::Array{particle,1}, nr::Int64)
     pa = filter(x -> x.tp == 1, parts)
     pb = filter(x -> x.tp == 2, parts)
-    pc = filter(x -> x.tp == 3, parts)
-
+    pc = Array{particle,1}()
+    for i =1:nr #nr = number of reactions
+        a = rand(pa); b = rand(pb) #choosing particles a and b at random
+        cm = a.mass + b.mass #c mass
+        x = a.mass/cm * a.pos[1] + b.mass/cm * b.pos[1] #position of new particle
+        y = a.mass/cm * a.pos[2] + b.mass/cm * b.pos[2]
+        vx = a.mass/cm * a.vel[1] + b.mass/cm * b.vel[1] #velocity of the new particle, conserving the momentum
+        vy = a.mass/cm * a.vel[2] + b.mass/cm * b.vel[2]
+        c = particle([1,1], cm, 3) #creating the particle c
+        c.pos = [x,y]; c.vel = [vx,vy] #positions and velocities.
+        push!(pc, c) #adding the particle c to the
+        a.mass = 0.0; b.mass = 0.0
+        filter!(x -> x.mass != 0.0, pa); filter!(x -> x.mass != 0.0, pb)  #removing the particles that reacted.
+    end
+    return pc
+end
+################################################################################
+#next function is to graph the positions
+function grap_pos(parts::Array{particle,1},tp::Int64)
+    x = filter(x -> x.tp == tp, parts)
+    xy = zeros(length(x),2)
+    for (i,p) in enumerate(x)
+        xy[i,:] = collect(p.pos)
+    end
+    return xy
 end

@@ -32,10 +32,10 @@ type box
     vel::Array{Float64,1} # the velocity of the box.
     np::Array{Int64,1}#  not really sure if is neccesary to have the number of particles of each box.
     ind::Int64
-    function box(m::Array{Float64,1}, x::Int64)
+    function box(m::Int64, x::Int64)
         this = new()
         this.vel = zeros(2)
-        this.np = zeros(Int64,length(m))
+        this.np = zeros(Int64,m)
         this.ind = x
         return this
     end
