@@ -8,6 +8,9 @@ function get_box(parts::Array{particle,1}, boxes::Array{box,1}, Lx::Int64)
     end
     for p in parts
         p.indbox = ceil(p.pgrid[1]) + Lx * (ceil(p.pgrid[2])-1)
+        if p.indbox < 0
+            println(p)
+        end
         boxes[p.indbox].np[p.tp] += 1
     end
 end
@@ -93,14 +96,10 @@ end
 function shift_grid!(parts::Array{particle,1},a::Float64, dim::Array{Int64,1})
     δx = rand()*rand(-a/2:a/2)
     δy = rand()*rand(-a/2:a/2)
+    #fparts = filter( x -> x.pos[1] < dim[1], filter(x -> x.pos[1] > 1 , parts))
     for p in parts
-        #p.pgrid[1] = mod(p.pos[1] + δx, dim[1])
-        if p.pos[1] + δx > dim[1] || p.pos[1] + δx < 0
-            p.pgrid = p.pos
-        else
-            p.pgrid[1] = p.pos[1] + δx
-            p.pgrid[2] = mod(p.pos[2] + δy, dim[2])
-        end
+        p.pgrid[1] = mod(p.pos[1] + δx, dim[1])
+        p.pgrid[2] = mod(p.pos[2] + δy, dim[2])
     end
 end
 #now we need to shift back the particles.
@@ -222,7 +221,9 @@ function reac_box(parts::Array{particle,1}, nr::Int64)
     pc = Array{particle,1}()
     for i =1:nr #nr = number of reactions
         a = rand(pa); b = rand(pb) #choosing particles a and b at random
+        #println(a,b)
         cm = a.mass + b.mass #c mass
+        #println(cm)
         x = a.mass/cm * a.pos[1] + b.mass/cm * b.pos[1] #position of new particle
         y = a.mass/cm * a.pos[2] + b.mass/cm * b.pos[2]
         vx = a.mass/cm * a.vel[1] + b.mass/cm * b.vel[1] #velocity of the new particle, conserving the momentum

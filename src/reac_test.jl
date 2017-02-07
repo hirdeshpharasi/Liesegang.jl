@@ -8,11 +8,11 @@ using Plots #plotting package
 ################################################################################
 #defining the parameters
 Lx = 50
-Ly = 5 #size of the space
+Ly = 20 #size of the space
 dim = [Lx,Ly]
 a = 1.0 #size of the boxes, default = 1
 m = [1.0, 2.0] #masses
-np = [1000,1000] #number of particles
+np = [2000,2000] #number of particles
 ntp = 3 #number of species.
 Tr = 1/3 #reference temperature
 τ = 1.73 #1.73
@@ -22,7 +22,7 @@ angles = [90.0, 90.0]
 ################################################################################
 ###########                       INITIALIZING                       ###########
 
-parts = vcat([particle(1,dim, m[1],1) for _ in 1:np[1]], [particle(Lx,dim,m[1],2) for _ in 1:np[2]]) #initializing the particles.
+parts = vcat([particle(1,dim, m[1],1) for _ in 1:np[1]], [particle(Lx,dim,m[2],2) for _ in 1:np[2]]) #initializing the particles.
 #normalizing the momentum
 norm_momentum!(parts)
 #now the temperature to the reference Tr
@@ -51,13 +51,14 @@ for t in 1:tmax
         if countnz(box.np) > 1 #this is if there is more than one type of particle in the box
             collide_sc(parbox, ntp)
             #println("antes",'\t',box.np)
-            nr = prob_box(box.np, kr) #compute the probabilites of the transitions
-            if nr != 0
-                nc = reac_box(parbox, nr)
-                println(nc)
-                push!(parts, nc...) #this adds the new particles c to the array of particles.
-            end
+            #nr = prob_box(box.np, kr) #compute the probabilites of the transitions
+            #if nr != 0
+                #nc = reac_box(parbox, nr)
+                #println(nc)
+                #push!(parts, nc...) #this adds the new particles c to the array of particles.
+            #end
         end
+        filter!(x -> x.mass != 0.0, parts)
     end
     #shifting back the particles to their original places
     shiftback_grid!(parts)
