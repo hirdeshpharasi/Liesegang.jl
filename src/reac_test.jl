@@ -33,8 +33,7 @@ boxes = [box(ntp,i) for i in 1:(Lx * Ly)]
 ################################################################################
 #########################    now the simulation...   ###########################
 
-#anim = @animate
-for t in 1:tmax
+anim = @animate for t in 1:tmax
     #streaming step
     getpos_slip!(parts, τ, dim)
     #getpos_pbc!(parts,τ,dim)
@@ -51,25 +50,24 @@ for t in 1:tmax
         if countnz(box.np) > 1 #this is if there is more than one type of particle in the box
             collide_sc(parbox, ntp)
             #println("antes",'\t',box.np)
-            #nr = prob_box(box.np, kr) #compute the probabilites of the transitions
-            #if nr != 0
-                #nc = reac_box(parbox, nr)
+            nr = prob_box(box.np, kr) #compute the probabilites of the transitions
+            if nr != 0
+                nc = reac_box(parbox, nr)
                 #println(nc)
-                #push!(parts, nc...) #this adds the new particles c to the array of particles.
-            #end
+                push!(parts, nc...) #this adds the new particles c to the array of particles.
+            end
         end
         filter!(x -> x.mass != 0.0, parts)
     end
     #shifting back the particles to their original places
     shiftback_grid!(parts)
-    #x = grap_pos(parts,1)
-    #y = grap_pos(parts,2)
-    #z = grap_pos(parts,3)
+    x = grap_pos(parts,1)
+    y = grap_pos(parts,2)
+    z = grap_pos(parts,3)
     #vx = [parts[i].vel[1]/3 for i in 1:np] #dividing the vectors by a factor of 3 just for the visualization.
     #vy = [parts[i].vel[2]/3 for i in 1:np]
-    #scatter(x[:,1],x[:,2], xlims = (0,Lx), ylims = (0,Ly), size = (Lx*10,Ly*20))
-    #scatter!(y[:,1],y[:,2])# xlims = (0,Lx), ylims = (0,Ly))
-    #scatter!(z[:,1],z[:,2])
+    scatter(x[:,1],x[:,2], xlims = (0,Lx), ylims = (0,Ly), size = (Lx*100,Ly*100))
+    scatter!(y[:,1],y[:,2])# xlims = (0,Lx), ylims = (0,Ly))
+    scatter!(z[:,1],z[:,2])
 end
-
 gif(anim, "testmulti$(ARGS[1]).gif", fps = 8)

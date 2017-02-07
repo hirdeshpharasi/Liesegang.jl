@@ -84,7 +84,7 @@ function collide_sc(parts::Array{particle,1}, tp::Int64)
             tmass += p.mass
         end
         vel /= tmass
-        for p in parts #loop over all particles
+        for p in sp #loop over all particles
             v = p.vel - vel #extraction of the velocity of the box
             α = 90.0*rand([-1,1]) #the rotation angle
             vn = rotate_vec(v, α) #rotation of the vector
@@ -96,9 +96,11 @@ end
 function shift_grid!(parts::Array{particle,1},a::Float64, dim::Array{Int64,1})
     δx = rand()*rand(-a/2:a/2)
     δy = rand()*rand(-a/2:a/2)
-    #fparts = filter( x -> x.pos[1] < dim[1], filter(x -> x.pos[1] > 1 , parts))
     for p in parts
-        p.pgrid[1] = mod(p.pos[1] + δx, dim[1])
+        if p.pos[1] + δx < 0 || p.pos[1] + δx > dim[1]
+            p.pgrid[1] = p.pos[1]
+        end
+        #p.pgrid[1] = mod(p.pos[1] + δx, dim[1])
         p.pgrid[2] = mod(p.pos[2] + δy, dim[2])
     end
 end
