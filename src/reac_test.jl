@@ -7,18 +7,18 @@ using Liesegang
 using Plots #plotting package
 ################################################################################
 #defining the parameters
-Lx = 50
-Ly = 20 #size of the space
+Lx = 1000
+Ly = 10 #size of the space
 dim = [Lx,Ly]
 a = 1.0 #size of the boxes, default = 1
 m = [1.0, 2.0] #masses
-np = [2000,2000] #number of particles
+np = [50000,50000] #number of particles
 ntp = 3 #number of species.
 Tr = 1/3 #reference temperature
 τ = 1.73 #1.73
 kr = 0.8 # probability of reaction or reaction rate.
-tmax = 500
-angles = [90.0, 90.0]
+tmax = 1000
+angles = [60.0,90.0,120.0,180.0]
 ################################################################################
 ###########                       INITIALIZING                       ###########
 
@@ -46,9 +46,9 @@ anim = @animate for t in 1:tmax
         parbox = filter(x-> x.indbox == i, parts) #selecting the particles that are in the box.
         #println(i,'\t',length(parbox))
         if isempty(parbox); continue; end  #ignore next steps if the box is empty
-        collide_mc(parbox)
+        collide_mc(parbox, angles)
         if countnz(box.np) > 1 #this is if there is more than one type of particle in the box
-            collide_sc(parbox, ntp)
+            collide_sc(parbox, ntp, angles)
             #println("antes",'\t',box.np)
             nr = prob_box(box.np, kr) #compute the probabilites of the transitions
             if nr != 0
@@ -66,8 +66,11 @@ anim = @animate for t in 1:tmax
     z = grap_pos(parts,3)
     #vx = [parts[i].vel[1]/3 for i in 1:np] #dividing the vectors by a factor of 3 just for the visualization.
     #vy = [parts[i].vel[2]/3 for i in 1:np]
-    scatter(x[:,1],x[:,2], xlims = (0,Lx), ylims = (0,Ly), size = (Lx*100,Ly*100))
+    scatter(x[:,1],x[:,2], xlims = (0,Lx), ylims = (0,Ly), size = (Lx,Ly*20))
     scatter!(y[:,1],y[:,2])# xlims = (0,Lx), ylims = (0,Ly))
     scatter!(z[:,1],z[:,2])
 end
-gif(anim, "testmulti$(ARGS[1]).gif", fps = 8)
+
+#gif(anim, "testreact.gif", fps = 8)
+
+gif(anim, "testmulti$(Lx)-$(tmax).gif", fps = 8)

@@ -58,7 +58,8 @@ function box_velmc(parts::Array{particle,1},boxes::Array{box,1}, m::Array{Float6
 end
 ################################################################################
 #collision in the new way.
-function collide_mc(parts::Array{particle,1})
+function collide_mc(parts::Array{particle,1}, angles::Array{Float64})
+    α = rand(angles)rand([-1,1])
     vel = zeros(2)
     tmass = 0 #initializating the total mass of the box
     for p in parts #the loop is made in the particles inside the box
@@ -68,13 +69,14 @@ function collide_mc(parts::Array{particle,1})
     vel /= tmass #normalize the momentum of the box with the mass of the particles.
     for p in parts #loop over all particles
         v = p.vel - vel #extraction of the velocity of the box
-        α = 90.0*rand([-1,1]) #the rotation angle
+        #α = 90.0*rand([-1,1]) #the rotation angle
         vn = rotate_vec(v, α) #rotation of the vector
         p.vel = vn + vel #adding the vector and the velocity of the box
     end
 end
-function collide_sc(parts::Array{particle,1}, tp::Int64)
+function collide_sc(parts::Array{particle,1}, tp::Int64, angles::Array{Float64})
     for j =1:tp
+        α = rand(angles)*rand([-1,1])
         vel = zeros(2)
         tmass = 0
         sp = filter(x-> x.tp == j, parts)
@@ -86,7 +88,7 @@ function collide_sc(parts::Array{particle,1}, tp::Int64)
         vel /= tmass
         for p in sp #loop over all particles
             v = p.vel - vel #extraction of the velocity of the box
-            α = 90.0*rand([-1,1]) #the rotation angle
+            #α = 90.0*rand([-1,1]) #the rotation angle
             vn = rotate_vec(v, α) #rotation of the vector
             p.vel = vn + vel #adding the vector and the velocity of the box
         end
@@ -99,6 +101,8 @@ function shift_grid!(parts::Array{particle,1},a::Float64, dim::Array{Int64,1})
     for p in parts
         if p.pos[1] + δx < 0 || p.pos[1] + δx > dim[1]
             p.pgrid[1] = p.pos[1]
+        else
+            p.pgrid[1] = p.pos[1] + δx
         end
         #p.pgrid[1] = mod(p.pos[1] + δx, dim[1])
         p.pgrid[2] = mod(p.pos[2] + δy, dim[2])
