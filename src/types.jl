@@ -10,7 +10,7 @@ type particle
         this = new()
         this.pos = rand(2) .* dim
         this.pgrid = this.pos[:]
-        this.vel = rand(2)
+        this.vel = [rand()*rand([-1,1]),rand()*rand([-1,1])]
         this.mass = m
         this.indbox = ceil(this.pos[1]) + dim[1] * (ceil(this.pos[2])-1)
         this.tp = tp
@@ -20,7 +20,7 @@ type particle
         this = new()
         this.pos = [rand()+(x-1),rand()* dim[2]]
         this.pgrid = this.pos[:]
-        this.vel = rand(2)
+        this.vel = [rand()*rand([-1,1]),rand()*rand([-1,1])]
         this.mass = m
         this.indbox = ceil(this.pos[1]) + dim[1] * (ceil(this.pos[2])-1)
         this.tp = tp
