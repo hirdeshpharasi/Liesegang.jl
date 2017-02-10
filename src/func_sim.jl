@@ -165,10 +165,10 @@ end
 ################################################################################
 #this is the ininitialization part, first the normalization of the total momentum.
 function norm_momentum!(parts::Array{particle,1})
-    vt = zeros(2) #sum of velocities
+    vt = zeros(2) #sum of momentum
     mt = 0 #total mass
     for p in parts #summing all velocities and masses
-        vt += p.vel
+        vt += p.mass * p.vel
         mt += p.mass
     end
     vt /= mt #normalizing the sum
