@@ -13,11 +13,10 @@ dim = [Lx,Ly]
 a = 1.0 #size of the boxes, default = 1
 m = [1.0, 2.0] #masses
 np = [5000,5000] #number of particles
-ntp = 4 #number of species.
+ntp = 3 #number of species.
 Tr = 1/3 #reference temperature
 τ = 1.73 #1.73
 kr = 0.8 # probability of reaction or reaction rate.
-ks = 8 #treshold of nucleation
 tmax = 800
 angles = [60.0,90.0,120.0,180.0]
 ################################################################################
@@ -57,9 +56,6 @@ anim = @animate for t in 1:tmax
                 #println(nc)
                 push!(parts, nc...) #this adds the new particles c to the array of particles.
             end
-        end
-        if box.np[3] > ks
-            nucleate()
         end
         filter!(x -> x.mass != 0.0, parts)
     end
