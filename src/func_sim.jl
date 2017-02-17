@@ -257,6 +257,6 @@ end
 function nucleate(parts::Array{particle,1}, ks::Int64)
     pc = filter(x -> x.tp == 3, parts)
     cm = pc[1].mass * ks
-
+    
 
 end
