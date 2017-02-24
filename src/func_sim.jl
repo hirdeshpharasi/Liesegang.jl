@@ -256,7 +256,9 @@ end
 #This is the nucleation function
 function nucleate(parts::Array{particle,1}, ks::Int64)
     pc = filter(x -> x.tp == 3, parts)
-    cm = pc[1].mass * ks
-    
-
+    dm = pc[1].mass * ks
+    d = particle([1,1], dm, 4)
+    d.pos = 1/ks * reduce((x,y) -> x.pos + y.pos, pc[1:ks]); d.vel = [0.0,0.0]
+    for i = 1:ks; pc[i].mass = 0.0; end
+    return d
 end
