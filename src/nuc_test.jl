@@ -29,7 +29,7 @@ norm_momentum!(parts)
 norm_temperature!(parts, Tr)
 #initializing the boxes
 boxes = [box(ntp,i) for i in 1:(Lx * Ly)]
-
+dparts = Array{particle,1}()
 ################################################################################
 #########################    now the simulation...   ###########################
 
@@ -60,6 +60,7 @@ anim = @animate for t in 1:tmax
         if box.np[3] > ks
             dp = nucleate(parbox,ks)
         end
+        push!(dparts, dp)
         filter!(x -> x.mass != 0.0, parts)
     end
     #shifting back the particles to their original places

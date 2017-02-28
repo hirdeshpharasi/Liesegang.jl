@@ -1,6 +1,7 @@
 ################################################################################
 ##################### MODULES FOR MULTI PARTICLE COLLISIONS ####################
 ################################################################################
+using StatsBase
 #This is to get the number of box where the particle is.
 function get_box(parts::Array{particle,1}, boxes::Array{box,1}, Lx::Int64)
     for box in boxes
@@ -255,10 +256,15 @@ end
 ################################################################################
 #This is the nucleation function
 function nucleate(parts::Array{particle,1}, ks::Int64)
-    pc = filter(x -> x.tp == 3, parts)
-    dm = pc[1].mass * ks
-    d = particle([1,1], dm, 4)
-    d.pos = 1/ks * reduce((x,y) -> x.pos + y.pos, pc[1:ks]); d.vel = [0.0,0.0]
-    for i = 1:ks; pc[i].mass = 0.0; end
-    return d
+    pc = filter(x -> x.tp == 3, parts) #choose the c-type particles
+    dm = pc[1].mass * ks #calculate mass of d
+    nd = div(length(pc),ks) #the number of nucleations
+    d = [particle([1,1], dm, 4) for _ in 1:nd] #the array of d particles
+    for k = 1:nd
+        rc = sample(pc, ks, replace=false) #choosing randomly the c particles
+        d[k].pos = 1/ks * reduce((x,y) -> x.pos + y.pos, rc); d[k].vel = [0.0,0.0] #calculation of the position
+        for p in rc; p.mass = 0.0; end  #removing the c particles that nucleate
+        filter!(x -> x.mass != 0.0, rc)
+    end
+    return d # returning the array of d particles.
 end
