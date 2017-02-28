@@ -59,8 +59,8 @@ anim = @animate for t in 1:tmax
         end
         if box.np[3] > ks
             dp = nucleate(parbox,ks)
+            push!(dparts, dp)
         end
-        push!(dparts, dp)
         filter!(x -> x.mass != 0.0, parts)
     end
     #shifting back the particles to their original places
