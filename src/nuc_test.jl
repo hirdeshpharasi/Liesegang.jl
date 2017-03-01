@@ -5,6 +5,7 @@
 #loading the package Liesegang.jl
 using Liesegang
 using Plots #plotting package
+using StatsBase
 ################################################################################
 #defining the parameters
 Lx = 100
@@ -13,7 +14,8 @@ dim = [Lx,Ly]
 a = 1.0 #size of the boxes, default = 1
 m = [1.0, 2.0] #masses
 np = [5000,5000] #number of particles
-ntp = 3 #number of species.
+ntp = 4 #number of species.
+ks = 10
 Tr = 1/3 #reference temperature
 τ = 1.73 #1.73
 kr = 0.8 # probability of reaction or reaction rate.
@@ -59,7 +61,7 @@ anim = @animate for t in 1:tmax
         end
         if box.np[3] > ks
             dp = nucleate(parbox,ks)
-            push!(dparts, dp)
+            push!(dparts, dp...)
         end
         filter!(x -> x.mass != 0.0, parts)
     end
@@ -68,13 +70,15 @@ anim = @animate for t in 1:tmax
     x = grap_pos(parts,1)
     y = grap_pos(parts,2)
     z = grap_pos(parts,3)
+    w = grap_pos(dparts,4)
     #vx = [parts[i].vel[1]/3 for i in 1:np] #dividing the vectors by a factor of 3 just for the visualization.
     #vy = [parts[i].vel[2]/3 for i in 1:np]
-    scatter(x[:,1],x[:,2], xlims = (0,Lx), ylims = (0,Ly), size = (Lx*10,Ly*20))
+    scatter(x[:,1],x[:,2], xlims = (0,Lx), ylims = (0,Ly), size = (Lx*10,Ly*20), legend=false)
     scatter!(y[:,1],y[:,2])# xlims = (0,Lx), ylims = (0,Ly))
     scatter!(z[:,1],z[:,2])
+    scatter!(w[:,1],w[:,2], c=:yellow)
 end
 
 #gif(anim, "testreact.gif", fps = 8)
 
-gif(anim, "testmulti$(Lx)-$(tmax).gif", fps = 9)
+gif(anim, "testnuc$(Lx)-$(tmax).gif", fps = 9)

@@ -262,9 +262,9 @@ function nucleate(parts::Array{particle,1}, ks::Int64)
     d = [particle([1,1], dm, 4) for _ in 1:nd] #the array of d particles
     for k = 1:nd
         rc = sample(pc, ks, replace=false) #choosing randomly the c particles
-        d[k].pos = 1/ks * reduce((x,y) -> x.pos + y.pos, rc); d[k].vel = [0.0,0.0] #calculation of the position
+        d[k].pos = 1/ks * mapreduce(x -> x.pos,+ , rc); d[k].vel = [0.0,0.0] #calculation of the position
         for p in rc; p.mass = 0.0; end  #removing the c particles that nucleate
-        filter!(x -> x.mass != 0.0, rc)
+        filter!(x -> x.mass != 0.0, pc)
     end
     return d # returning the array of d particles.
 end
