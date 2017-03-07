@@ -15,7 +15,7 @@ a = 1.0 #size of the boxes, default = 1
 m = [1.0, 2.0] #masses
 np = [5000,5000] #number of particles
 ntp = 4 #number of species.
-ks = 10
+ks = 7; ka = 3
 Tr = 1/3 #reference temperature
 τ = 1.73 #1.73
 kr = 0.8 # probability of reaction or reaction rate.
@@ -31,7 +31,7 @@ norm_momentum!(parts)
 norm_temperature!(parts, Tr)
 #initializing the boxes
 boxes = [box(ntp,i) for i in 1:(Lx * Ly)]
-dparts = Array{particle,1}()
+#dparts = Array{particle,1}()
 ################################################################################
 #########################    now the simulation...   ###########################
 
@@ -61,7 +61,11 @@ anim = @animate for t in 1:tmax
         end
         if box.np[3] > ks
             dp = nucleate(parbox,ks)
-            push!(dparts, dp...)
+            push!(parts, dp...)
+        end
+        filter!(x -> x.mass != 0.0, parbox)
+        if box.np[4] > 0 && box.np[3] > ka
+            agg_sb!(parbox)
         end
         filter!(x -> x.mass != 0.0, parts)
     end
@@ -70,7 +74,7 @@ anim = @animate for t in 1:tmax
     x = grap_pos(parts,1)
     y = grap_pos(parts,2)
     z = grap_pos(parts,3)
-    w = grap_pos(dparts,4)
+    w = grap_pos(parts,4)
     #vx = [parts[i].vel[1]/3 for i in 1:np] #dividing the vectors by a factor of 3 just for the visualization.
     #vy = [parts[i].vel[2]/3 for i in 1:np]
     scatter(x[:,1],x[:,2], xlims = (0,Lx), ylims = (0,Ly), size = (Lx*10,Ly*20), legend=false)

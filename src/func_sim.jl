@@ -262,9 +262,20 @@ function nucleate(parts::Array{particle,1}, ks::Int64)
     d = [particle([1,1], dm, 4) for _ in 1:nd] #the array of d particles
     for k = 1:nd
         rc = sample(pc, ks, replace=false) #choosing randomly the c particles
-        d[k].pos = 1/ks * mapreduce(x -> x.pos,+ , rc); d[k].vel = [0.0,0.0] #calculation of the position
+        d[k].pos = 1/ks * mapreduce(x -> x.pos,+ , rc); d[k].vel = 1/ks * mapreduce(x -> x.vel,+ , rc) #calculation of the position
         for p in rc; p.mass = 0.0; end  #removing the c particles that nucleate
         filter!(x -> x.mass != 0.0, pc)
     end
     return d # returning the array of d particles.
+end
+################################################################################
+#function for agregation in the same box.
+function agg_sb!(parts::Array{particle,1})
+    pc = filter(x -> x.tp == 3, parts)
+    pd = filter(x -> x.tp == 4, parts)
+    d = rand(pd)
+    dm = pc[1].mass * length(pc) + d.mass;
+    pos = 1 / dm * ( d.mass * d.pos + pc[1].mass * mapreduce(x -> x.pos,+ , pc)); vel = 1 / dm * (d.mass * d.vel + pc[1].mass * mapreduce(x -> x.vel,+ , pc))
+    d.pos = pos; d.vel = vel
+    for p in pc; p.mass = 0.0; end
 end
